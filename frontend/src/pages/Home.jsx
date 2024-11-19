@@ -3,6 +3,7 @@ import backgroundImage from "../assets/bg_image.png";
 import mainImage from "../assets/more_personal.png";
 import mainImage2 from "../assets/More_reviews.png";
 import mainImage3 from "../assets/More_samples.png";
+import { Link } from "react-router-dom";
 
 function Home() {
   return (
@@ -21,7 +22,7 @@ function Home() {
             Your next favorite thing is here.
           </p>
           <button className="mt-6 px-8 py-3 border border-blue-500 text-blue-500 rounded-full hover:bg-blue-100 transition duration-300 transform hover:scale-105">
-            Join the community now
+            <Link to="SignInPage">Join the community now</Link>
           </button>
         </div>
       </section>

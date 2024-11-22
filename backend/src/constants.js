@@ -1,1 +1,1 @@
-export const DB_NAME="SAWANTDB"
+export const DB_NAME="feedbackDB"

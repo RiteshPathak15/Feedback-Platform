@@ -60,7 +60,7 @@ userSchema.pre("save", async function (next) {
 });
 
 // Middleware to handle duplicate fields errors gracefully
-userSchema.post("save", function (error, doc, next) {
+userSchema.post("save", function (error, next) {
   if (error.name === "MongoServerError" && error.code === 11000) {
     if (error.keyValue.username) {
       next(new Error("Username already exists"));
@@ -103,7 +103,7 @@ userSchema.methods.generateRefreshToken = function () {
     process.env.REFRESH_TOKEN_SECRET,
     {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "7d", // Default to 7 days
-    }
+    } 
   );
 };
 

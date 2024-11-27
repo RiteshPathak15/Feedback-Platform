@@ -1,5 +1,5 @@
+import bcrypt from "bcrypt";
 import { User } from "../models/user.models.js";
-// import bcrypt from "bcrypt";
 
 // Register User
 const registerUser = async (req, res) => {
@@ -8,7 +8,6 @@ const registerUser = async (req, res) => {
 
     // Validation
     if (!fullname || !username || !email || !password) {
-      console.log("All fields are required for registration");
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -17,7 +16,6 @@ const registerUser = async (req, res) => {
       $or: [{ email }, { username }],
     });
     if (existingUser) {
-      console.log("User already registered with this email or username");
       return res
         .status(400)
         .json({ message: "Email or username already registered" });
@@ -46,10 +44,8 @@ const registerUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log("Error with registration", error);
-    res
-      .status(500)
-      .json({ message: "Server error. Please try again later." });
+    console.error("Error with registration:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
 
@@ -60,13 +56,9 @@ const loginUser = async (req, res) => {
 
     // Validation
     if (!email && !username) {
-      console.log("Email or username is required for login");
-      return res
-        .status(400)
-        .json({ message: "Email or username is required" });
+      return res.status(400).json({ message: "Email or username is required" });
     }
     if (!password) {
-      console.log("Password is required for login");
       return res.status(400).json({ message: "Password is required" });
     }
 
@@ -75,15 +67,13 @@ const loginUser = async (req, res) => {
       $or: [{ email }, { username }],
     });
     if (!user) {
-      console.log("User not found");
       return res.status(404).json({ message: "User not found" });
     }
 
     // Validate password
-    const isPasswordCorrect = await user.isPasswordCorrect(password);
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect) {
-      console.log("Incorrect password");
-      return res.status(400).json({ message: "Invalid password credentials" });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     // Generate tokens
@@ -92,10 +82,17 @@ const loginUser = async (req, res) => {
     user.refreshToken = refreshToken;
     await user.save();
 
+    // Set cookies
+    const cookieOptions = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+    };
+    res.cookie("accessToken", accessToken, cookieOptions);
+    res.cookie("refreshToken", refreshToken, cookieOptions);
+
     res.status(200).json({
       message: "Login successful",
-      accessToken,
-      refreshToken,
       user: {
         id: user._id,
         fullname: user.fullname,
@@ -105,30 +102,101 @@ const loginUser = async (req, res) => {
         isPremium: user.isPremium,
       },
     });
-
-    const loggedInUser = await User.findById(user._id).select(
-      "-password -refreshToken"
-    );
-
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
-
-    return res
-      .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
-      .json({
-        message: "Login successful",
-        tokens: { accessToken, refreshToken },
-      });
   } catch (error) {
     console.error("Error in loginUser:", error);
-    return res
-      .status(500)
-      .json({ message: "Server error. Please try again later." });
+    res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
 
-export { registerUser, loginUser };
+// Logout User
+const logoutUser = async (req, res) => {
+  try {
+    // Clear refresh token from database
+    await User.findByIdAndUpdate(
+      req.user._id,
+      { $unset: { refreshToken: 1 } },
+      { new: true }
+    );
+
+    // Clear cookies
+    res
+      .clearCookie("accessToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "Strict",
+      })
+      .clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "Strict",
+      })
+      .status(200)
+      .json({ message: "User logged out successfully" });
+  } catch (error) {
+    console.error("Error in logoutUser:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+};
+
+const upgradeToPremium = async (req, res) => {
+  /*
+  find and update the user is preminum or not
+  user validate */
+  try {
+    const userId = req.user._id;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { isPremium: true },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      message: "User upgraded to premium successfully",
+      user: {
+        id: user._id,
+        fullname: user.fullname,
+        isPremium: user.isPremium,
+        rewardPoints: user.rewardPoints,
+      },
+    });
+  } catch (error) {
+    console.error("Error upgrading to premium:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+};
+
+const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.user._id; // Assuming `verifyJWT` middleware is used
+    const user = await User.findById(userId).select("-password -refreshToken");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      user: {
+        id: user._id,
+        fullname: user.fullname,
+        username:user.username,
+        isPremium: user.isPremium,
+        rewardPoints: user.rewardpoints,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+};
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  upgradeToPremium,
+  getUserProfile,
+};

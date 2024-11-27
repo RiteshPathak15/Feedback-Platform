@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { User } from "../models/user.models.js";
+import { Feedback } from "../models/Feedback.models.js";
 
 // Register User
 const registerUser = async (req, res) => {
@@ -85,7 +86,7 @@ const loginUser = async (req, res) => {
     // Set cookies
     const cookieOptions = {
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: "Strict",
     };
     res.cookie("accessToken", accessToken, cookieOptions);
@@ -98,7 +99,7 @@ const loginUser = async (req, res) => {
         fullname: user.fullname,
         email: user.email,
         username: user.username,
-        rewardpoints: user.rewardpoints,
+        totalRewardPoints: user.rewardpoints,
         isPremium: user.isPremium,
       },
     });

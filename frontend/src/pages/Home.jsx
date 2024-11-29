@@ -13,7 +13,7 @@ function Home() {
         className="relative flex items-center justify-center h-screen bg-cover bg-center"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        <div className="absolute inset-0 bg-white bg-opacity-30"></div>
+        <div className="absolute inset-0"></div>
         <div className="relative z-10 text-center max-w-3xl px-6">
           <h1 className="text-4xl font-bold text-blue-900 md:text-6xl leading-tight">
             TestifyIt is joining Influenster.

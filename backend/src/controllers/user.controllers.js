@@ -32,7 +32,21 @@ const registerUser = async (req, res) => {
       email,
       password,
     });
+
+    // Generate tokens
+    const accessToken = newUser.generateAccessToken();
+    const refreshToken = newUser.generateRefreshToken();
+    newUser.refreshToken = refreshToken; // Store refresh token in database
     await newUser.save();
+
+    // Set cookies for the tokens
+    const cookieOptions = {
+      httpOnly: true,
+      secure: false, // Set to true in production with HTTPS
+      sameSite: "Strict",
+    };
+    res.cookie("accessToken", accessToken, cookieOptions);
+    res.cookie("refreshToken", refreshToken, cookieOptions);
 
     res.status(201).json({
       message: "User registered successfully",
@@ -41,7 +55,8 @@ const registerUser = async (req, res) => {
         fullname: newUser.fullname,
         email: newUser.email,
         username: newUser.username,
-        rewardpoints: newUser.rewardpoints,
+        rewardPoints: newUser.rewardpoints,
+        isPremium: newUser.isPremium,
       },
     });
   } catch (error) {
@@ -77,16 +92,18 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Generate tokens
+    // Generate new tokens
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
+
+    // Update user with the new refresh token
     user.refreshToken = refreshToken;
     await user.save();
 
     // Set cookies
     const cookieOptions = {
       httpOnly: true,
-      secure: false,
+      secure: false, // Set to true in production with HTTPS
       sameSite: "Strict",
     };
     res.cookie("accessToken", accessToken, cookieOptions);
@@ -112,10 +129,10 @@ const loginUser = async (req, res) => {
 // Logout User
 const logoutUser = async (req, res) => {
   try {
-    // Clear refresh token from database
+    // Clear refresh token from the database
     await User.findByIdAndUpdate(
       req.user._id,
-      { $unset: { refreshToken: 1 } },
+      { refreshToken: null }, // Keep null instead of deletion
       { new: true }
     );
 
@@ -123,12 +140,12 @@ const logoutUser = async (req, res) => {
     res
       .clearCookie("accessToken", {
         httpOnly: true,
-        secure: true,
+        secure: true, // Set true in production
         sameSite: "Strict",
       })
       .clearCookie("refreshToken", {
         httpOnly: true,
-        secure: true,
+        secure: true, // Set true in production
         sameSite: "Strict",
       })
       .status(200)
@@ -173,7 +190,9 @@ const upgradeToPremium = async (req, res) => {
 const getUserProfile = async (req, res) => {
   try {
     const userId = req.user._id; // Assuming `verifyJWT` middleware is used
-    const user = await User.findById(userId).select("-password -refreshToken");
+    const user = await User.findById(userId).select(
+      "-password -refreshToken"
+    );
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -183,7 +202,8 @@ const getUserProfile = async (req, res) => {
       user: {
         id: user._id,
         fullname: user.fullname,
-        username:user.username,
+        username: user.username,
+        email:user.email,
         isPremium: user.isPremium,
         rewardPoints: user.rewardpoints,
       },

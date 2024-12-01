@@ -137,7 +137,7 @@ function Navbar() {
                   className="block px-4 py-2 text-blue-900 hover:bg-blue-100"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  Information
+                  User Information
                 </Link>
                 <button
                   onClick={handleLogout}

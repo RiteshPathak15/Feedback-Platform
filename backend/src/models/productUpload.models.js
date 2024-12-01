@@ -28,10 +28,6 @@ const productSchema = new Schema(
       ref: "User", // Reference to the User model
       required: true,
     },
-    isPlatformProduct: {
-      type: Boolean,
-      default: false, // False for user-uploaded products
-    },
   },
   {
     timestamps: true,

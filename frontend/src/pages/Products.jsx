@@ -1,61 +1,48 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Products = () => {
-  const allProducts = [
-    {
-      id: 1,
-      image: "https://via.placeholder.com/100",
-      brand: "eos",
-      name: "EOS strawberry sorbet lip balm",
-      category: "Lip Care",
-      rating: 4.2,
-      reviews: 158883,
-    },
-    {
-      id: 2,
-      image: "https://via.placeholder.com/100",
-      brand: "Maybelline",
-      name: "Maybelline FIT ME! Matte +...",
-      category: "Makeup",
-      rating: 4.4,
-      reviews: 154538,
-    },
-    {
-      id: 3,
-      image: "https://via.placeholder.com/100",
-      brand: "Neutrogena",
-      name: "Neutrogena Fragrance-Free...",
-      category: "Skincare",
-      rating: 4.5,
-      reviews: 131738,
-    },
-    {
-      id: 4,
-      image: "https://via.placeholder.com/100",
-      brand: "Too Faced",
-      name: "Mini Better Than Sex Volumizing...",
-      category: "Makeup",
-      rating: 4.4,
-      reviews: 125787,
-    },
-  ];
-
-  const categories = ["All Products", "Lip Care", "Makeup", "Skincare"];
-
+  const [categories] = useState([
+    "All Products",
+    "Lip Care",
+    "Makeup",
+    "Skincare",
+  ]);
   const [selectedCategory, setSelectedCategory] = useState("All Products");
-  const [products, setProducts] = useState(allProducts);
+  const [products, setProducts] = useState([]);
+  const [user, setUser] = useState(null); // assuming user data will be fetched here
 
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-    if (category === "All Products") {
-      setProducts(allProducts);
-    } else {
-      setProducts(
-        allProducts.filter((product) => product.category === category)
-      );
+  const navigate = useNavigate();
+
+  // Fetch user info (you can replace this with your actual user fetch logic)
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const { data } = await axios.get("/api/v1/users/profile"); // Assuming your backend is returning user profile here
+        setUser(data);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const fetchProducts = async (category) => {
+    try {
+      const { data } = await axios.get(`/api/v1/products`, {
+        params: { category }, // Sending category as query param
+      });
+      setProducts(data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
     }
   };
+
+  useEffect(() => {
+    fetchProducts(selectedCategory);
+  }, [selectedCategory]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -69,7 +56,7 @@ const Products = () => {
             {categories.map((category, index) => (
               <li
                 key={index}
-                onClick={() => handleCategoryChange(category)}
+                onClick={() => setSelectedCategory(category)}
                 className={`cursor-pointer text-gray-600 hover:text-gray-900 transition ${
                   selectedCategory === category ? "font-bold text-gray-900" : ""
                 }`}
@@ -86,6 +73,18 @@ const Products = () => {
             <h2 className="text-2xl font-bold text-gray-800">Products</h2>
             <p className="text-gray-500">{products.length} result(s)</p>
           </div>
+
+          {user && user.isPremium && (
+            <div className="mb-6">
+              <button
+                onClick={() => navigate("/UploadProduct")}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+              >
+                Upload Product
+              </button>
+            </div>
+          )}
+
           {products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {products.map((product) => (

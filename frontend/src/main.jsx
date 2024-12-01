@@ -15,9 +15,8 @@ import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import About from "./pages/About";
 import Products from "./pages/Products";
-import ProductDetail from "./pages/ProductDetail";
+import UploadProduct from "./pages/UploadProduct";
 import ProfileInformation from "./pages/ProfileInformation";
-
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<LayoutRoute />}>
@@ -28,7 +27,7 @@ const router = createBrowserRouter(
       <Route path="SignUpPage" element={<SignUpPage />} />
       <Route path="SignInPage" element={<SignInPage />} />
       <Route path="Products" element={<Products />} />
-      <Route path="Products/:id" element={<ProductDetail />} />{" "}
+      <Route path="UploadProduct" element={<UploadProduct />} />
       <Route path="ProfileInformation" element={<ProfileInformation />} />
       {/* Product Detail Route */}
     </Route>

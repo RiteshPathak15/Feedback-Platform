@@ -1,18 +1,15 @@
-// product.routes.js
-
 import express from "express";
-import {
-  createProduct,
-  commentOnProduct,
-} from "../controllers/product.controller.js";
-import { verifyPremium } from "../middlewares/auth.middlewares.js";
+import { createProduct, commentOnProduct } from "../controllers/product.controller.js";
+import { upload } from "../middlewares/multer.middlewares.js";
 
 const router = express.Router();
 
-// Route for uploading product (Only for premium users)
-router.post("/upload", verifyPremium, createProduct);
+// Route for uploading a product with image
+// router.post("/upload", upload.single("avatar"), createProduct);
+router.post("/upload", upload.single("productImage"), createProduct);
 
-// Route for commenting on a product (Available for both premium and non-premium users)
+// Route for commenting on a product
 router.post("/comment", commentOnProduct);
 
 export default router;
+ 

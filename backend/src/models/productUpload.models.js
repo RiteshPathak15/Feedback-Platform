@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const productSchema = new Schema(
   {
-    name: {
+    Imgname: {
       type: String,
       required: true,
       trim: true,
@@ -21,13 +21,34 @@ const productSchema = new Schema(
       trim: true,
     },
     imageUrl: {
-      type: String, // You can use Cloudinary or AWS S3 for image storage
+      type: String,
     },
     addedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Reference to the User model
+      ref: "User",
       required: true,
     },
+    pointsEarned: {
+      type: Number,
+      default: 0,
+    },
+    comments: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        username: {
+          type: String,
+          required: true,
+        },
+        comment: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

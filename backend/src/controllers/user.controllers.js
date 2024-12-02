@@ -189,9 +189,7 @@ const upgradeToPremium = async (req, res) => {
 const getUserProfile = async (req, res) => {
   try {
     const userId = req.user._id; // Assuming `verifyJWT` middleware is used
-    const user = await User.findById(userId).select(
-      "-password -refreshToken"
-    );
+    const user = await User.findById(userId).select("-password -refreshToken");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -202,7 +200,7 @@ const getUserProfile = async (req, res) => {
         id: user._id,
         fullname: user.fullname,
         username: user.username,
-        email:user.email,
+        email: user.email,
         isPremium: user.isPremium,
         rewardPoints: user.rewardpoints,
       },

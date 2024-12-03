@@ -28,7 +28,7 @@ const createProduct = async (req, res) => {
       return res.status(500).json({ message: "Error uploading product image" });
     }
 
-    // Create and save product
+    // Create and save the product
     const newProduct = new Product({
       Imgname,
       description,
@@ -63,36 +63,37 @@ const commentOnProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Calculate points based on the length of the comment
+    // Calculate points based on comment length
     const points = comment.length > 50 ? 10 : 5;
 
-    // Find the user and update reward points
-    const user = await User.findByIdAndUpdate(
-      userId,
-      { $inc: { rewardPoints: points } },
-      { new: true }
-    );
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    console.log("Updated user reward points:", user.rewardPoints); // Log updated points for debugging
-
-    // Append comment to the product
+    // Update the pointsEarned for the product
+    product.pointsEarned += points;
     product.comments = product.comments || [];
-    product.comments.push({ userId, username: user.username, comment });
+    product.comments.push({ userId, username: req.user.username, comment });
 
-    // Update the pointsEarned for the product (if applicable)
-    product.pointsEarned += points; // Increment the points earned by the product
     await product.save();
 
-    res.status(200).json({ message: "Comment added successfully", product });
+    // Recalculate total reward points for the user
+    const totalPoints = await Product.aggregate([
+      { $match: { "comments.userId": userId } },
+      { $group: { _id: null, totalPoints: { $sum: "$pointsEarned" } } },
+    ]);
+
+    const rewardPoints =
+      totalPoints.length > 0 ? totalPoints[0].totalPoints : 0;
+
+    // Update the user's rewardPoints
+    await User.findByIdAndUpdate(userId, { rewardpoints: rewardPoints });
+
+    res.status(200).json({
+      message: "Comment added successfully",
+      updatedRewardPoints: rewardPoints,
+      product,
+    });
   } catch (error) {
     console.error("Error adding comment:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
-
 
 export { createProduct, commentOnProduct };

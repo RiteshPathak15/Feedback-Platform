@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { User } from "../models/user.models.js";
+import { Product } from "../models/productUpload.models.js";
 
 // Register User
 const registerUser = async (req, res) => {
@@ -189,11 +190,19 @@ const upgradeToPremium = async (req, res) => {
 const getUserProfile = async (req, res) => {
   try {
     const userId = req.user._id; // Assuming `verifyJWT` middleware is used
-    const user = await User.findById(userId).select("-password -refreshToken");
 
+    const user = await User.findById(userId).select("-password -refreshToken");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
+    // Dynamically calculate reward points from products
+    const totalPoints = await Product.aggregate([
+      { $match: { "comments.userId": userId } },
+      { $group: { _id: null, totalPoints: { $sum: "$pointsEarned" } } },
+    ]);
+
+    const rewardPoints = totalPoints.length > 0 ? totalPoints[0].totalPoints : 0;
 
     res.status(200).json({
       user: {
@@ -202,7 +211,7 @@ const getUserProfile = async (req, res) => {
         username: user.username,
         email: user.email,
         isPremium: user.isPremium,
-        rewardPoints: user.rewardpoints,
+        rewardPoints, // Reflect calculated reward points
       },
     });
   } catch (error) {
@@ -210,6 +219,7 @@ const getUserProfile = async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
+
 
 export {
   registerUser,

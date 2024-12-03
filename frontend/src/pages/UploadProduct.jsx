@@ -1,130 +1,197 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const UploadProduct = () => {
-  const [name, setName] = useState("");
-  const [brand, setBrand] = useState("");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-  const [rating, setRating] = useState("");
-  const [image, setImage] = useState("");
-  const navigate = useNavigate();
+  const [file, setFile] = useState(null);
+  const [formData, setFormData] = useState({
+    Imgname: "",
+    description: "",
+    price: "",
+    category: "",
+    addedBy: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!file) {
+      alert("Please select an image file.");
+      return;
+    }
+
+    const data = new FormData();
+    data.append("productImage", file);
+    data.append("Imgname", formData.Imgname);
+    data.append("description", formData.description);
+    data.append("price", formData.price);
+    data.append("category", formData.category);
+    data.append("addedBy", formData.addedBy);
+
     try {
-      const response = await axios.post("/api/v1/products", {
-        name,
-        brand,
-        category,
-        description,
-        rating,
-        image,
+      setLoading(true);
+      const response = await axios.post("/api/v1/products/upload", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-      alert("Product uploaded successfully!");
-      navigate("/Products"); // Redirect to products page
+      alert("Product uploaded successfully");
     } catch (error) {
       console.error("Error uploading product:", error);
-      alert("Failed to upload product.");
+      alert("Error uploading product");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center p-10">
+      <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-md transform transition-transform">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+          <span role="img" aria-label="upload">
+            📦
+          </span>{" "}
           Upload Product
-        </h2>
+        </h1>
         <form onSubmit={handleSubmit}>
+          {/* Product Name */}
           <div className="mb-4">
-            <label htmlFor="name" className="block text-gray-600">
+            <label className="block text-gray-700 font-medium mb-2  items-center gap-2">
+              <span role="img" aria-label="name">
+                🏷️
+              </span>{" "}
               Product Name
             </label>
             <input
               type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
+              name="Imgname"
+              value={formData.Imgname}
+              onChange={handleInputChange}
               required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
             />
           </div>
-
+          {/* Description */}
           <div className="mb-4">
-            <label htmlFor="brand" className="block text-gray-600">
-              Brand
+            <label className="block text-gray-700 font-medium mb-2  items-center gap-2">
+              <span role="img" aria-label="description">
+                ✍️
+              </span>{" "}
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              required
+              rows="3"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+            />
+          </div>
+          {/* Price */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2  items-center gap-2">
+              <span role="img" aria-label="price">
+                💰
+              </span>{" "}
+              Price
             </label>
             <input
-              type="text"
-              id="brand"
-              value={brand}
-              onChange={(e) => setBrand(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleInputChange}
               required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
             />
           </div>
-
+          {/* Category */}
           <div className="mb-4">
-            <label htmlFor="category" className="block text-gray-600">
+            <label className="block text-gray-700 font-medium mb-2  items-center gap-2">
+              <span role="img" aria-label="category">
+                📚
+              </span>{" "}
               Category
             </label>
             <input
               type="text"
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
               required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
             />
           </div>
-
+          {/* Added By */}
           <div className="mb-4">
-            <label htmlFor="description" className="block text-gray-600">
-              Description
-            </label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="rating" className="block text-gray-600">
-              Rating
-            </label>
-            <input
-              type="number"
-              id="rating"
-              value={rating}
-              onChange={(e) => setRating(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="image" className="block text-gray-600">
-              Image URL
+            <label className="block text-gray-700 font-medium mb-2  items-center gap-2">
+              <span role="img" aria-label="user">
+                👤
+              </span>{" "}
+              Added By (User ID)
             </label>
             <input
               type="text"
-              id="image"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
+              name="addedBy"
+              value={formData.addedBy}
+              onChange={handleInputChange}
               required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
             />
           </div>
-
+          {/* File Upload */}
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2  items-center gap-2">
+              <span role="img" aria-label="image">
+                🖼️
+              </span>{" "}
+              Upload Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="block w-full text-gray-700 border border-gray-300 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {file && (
+              <p className="mt-2 text-sm text-green-600">
+                <span role="img" aria-label="check">
+                  ✅
+                </span>{" "}
+                Selected File: {file.name}
+              </p>
+            )}
+          </div>
+          {/* Loading Bar */}
+          {loading && (
+            <div className="mb-4">
+              <div className="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+                <div className="absolute top-0 left-0 h-full bg-blue-500 animate-pulse"></div>
+              </div>
+            </div>
+          )}
+          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
+            disabled={loading}
+            className={`w-full py-2 text-white rounded-lg font-semibold transform transition-transform ${
+              loading
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-gradient-to-r from-green-400 to-blue-500 hover:scale-105"
+            } focus:outline-none`}
           >
-            Upload Product
+            {loading ? "Uploading..." : "🚀 Upload Product"}
           </button>
         </form>
       </div>

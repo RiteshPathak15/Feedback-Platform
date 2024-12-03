@@ -3,23 +3,19 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Products = () => {
-  const [categories] = useState([
-    "All Products",
-    "Lip Care",
-    "Makeup",
-    "Skincare",
-  ]);
+  const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All Products");
   const [products, setProducts] = useState([]);
-  const [user, setUser] = useState(null); // assuming user data will be fetched here
-
+  const [userProducts, setUserProducts] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch user info (you can replace this with your actual user fetch logic)
+  // Fetch user info
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const { data } = await axios.get("/api/v1/users/profile"); // Assuming your backend is returning user profile here
+        const { data } = await axios.get("/api/v1/users/profile");
         setUser(data);
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -29,20 +25,49 @@ const Products = () => {
     fetchUser();
   }, []);
 
-  const fetchProducts = async (category) => {
-    try {
-      const { data } = await axios.get(`/api/v1/products`, {
-        params: { category }, // Sending category as query param
-      });
-      setProducts(data);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
-
+  // Fetch all products and premium user uploaded products
   useEffect(() => {
-    fetchProducts(selectedCategory);
-  }, [selectedCategory]);
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        // Fetch all products
+        const { data: allProducts } = await axios.get("/api/v1/products");
+        setProducts(allProducts);
+
+        // Fetch user uploaded products (if premium user)
+        if (user?.isPremium) {
+          const { data: uploadedProducts } = await axios.get(
+            "/api/v1/products/upload"
+          );
+          setUserProducts(uploadedProducts);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [user]);
+
+  // Combine and categorize products
+  useEffect(() => {
+    const combinedProducts = [...products, ...userProducts];
+    const allCategories = [
+      "All Products",
+      ...new Set(combinedProducts.map((product) => product.category)),
+    ];
+    setCategories(allCategories);
+  }, [products, userProducts]);
+
+  // Filter products based on selected category
+  const filteredProducts =
+    selectedCategory === "All Products"
+      ? [...products, ...userProducts]
+      : [...products, ...userProducts].filter(
+          (product) => product.category === selectedCategory
+        );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -71,7 +96,7 @@ const Products = () => {
         <div className="w-3/4 p-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Products</h2>
-            <p className="text-gray-500">{products.length} result(s)</p>
+            <p className="text-gray-500">{filteredProducts.length} result(s)</p>
           </div>
 
           {user && user.isPremium && (
@@ -85,9 +110,11 @@ const Products = () => {
             </div>
           )}
 
-          {products.length > 0 ? (
+          {loading ? (
+            <p className="text-gray-500">Loading products...</p>
+          ) : filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <Link to={`/Products/${product.id}`} key={product.id}>
                   <div className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition">
                     <img

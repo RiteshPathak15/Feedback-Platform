@@ -29,7 +29,6 @@ const router = createBrowserRouter(
       <Route path="Products" element={<Products />} />
       <Route path="UploadProduct" element={<UploadProduct />} />
       <Route path="ProfileInformation" element={<ProfileInformation />} />
-      {/* Product Detail Route */}
     </Route>
   )
 );

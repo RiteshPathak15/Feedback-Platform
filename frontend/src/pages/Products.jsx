@@ -1,148 +1,114 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Products = () => {
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("All Products");
+const Product = () => {
   const [products, setProducts] = useState([]);
-  const [userProducts, setUserProducts] = useState([]);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [cart, setCart] = useState([]);
 
-  // Fetch user info
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const { data } = await axios.get("/api/v1/users/profile");
-        setUser(data);
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-      }
-    };
-
-    fetchUser();
-  }, []);
-
-  // Fetch all products and premium user uploaded products
+  // Fetch products from the API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setLoading(true);
-        // Fetch all products
-        const { data: allProducts } = await axios.get("/api/v1/products");
-        setProducts(allProducts);
-
-        // Fetch user uploaded products (if premium user)
-        if (user?.isPremium) {
-          const { data: uploadedProducts } = await axios.get(
-            "/api/v1/products/upload"
-          );
-          setUserProducts(uploadedProducts);
-        }
+        const { data } = await axios.get("/api/v1/products");
+        setProducts(data.products); // Adjust if the structure is different
       } catch (error) {
         console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [user]);
+  }, []);
 
-  // Combine and categorize products
-  useEffect(() => {
-    const combinedProducts = [...products, ...userProducts];
-    const allCategories = [
-      "All Products",
-      ...new Set(combinedProducts.map((product) => product.category)),
-    ];
-    setCategories(allCategories);
-  }, [products, userProducts]);
+  // Handle adding product to the cart
+  const addToCart = (product) => {
+    setCart((prevCart) => [...prevCart, product]);
+  };
 
-  // Filter products based on selected category
-  const filteredProducts =
-    selectedCategory === "All Products"
-      ? [...products, ...userProducts]
-      : [...products, ...userProducts].filter(
-          (product) => product.category === selectedCategory
-        );
+  // Handle removing product from the cart
+  const removeFromCart = (productId) => {
+    setCart((prevCart) => prevCart.filter((item) => item._id !== productId));
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex">
-        {/* Sidebar */}
-        <div className="w-1/4 bg-white p-6 border-r border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-800 mb-6">
-            Filter by Category
-          </h2>
-          <ul className="space-y-4">
-            {categories.map((category, index) => (
-              <li
-                key={index}
-                onClick={() => setSelectedCategory(category)}
-                className={`cursor-pointer text-gray-600 hover:text-gray-900 transition ${
-                  selectedCategory === category ? "font-bold text-gray-900" : ""
-                }`}
-              >
-                {category}
-              </li>
-            ))}
-          </ul>
-        </div>
+    <div className="p-5">
+      <h1 className="text-2xl font-bold text-gray-800 mb-5">Products</h1>
 
-        {/* Products Grid */}
-        <div className="w-3/4 p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Products</h2>
-            <p className="text-gray-500">{filteredProducts.length} result(s)</p>
-          </div>
-
-          {user && user.isPremium && (
-            <div className="mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <div
+            key={product._id}
+            className="bg-white p-4 rounded-lg shadow-lg transition hover:shadow-xl"
+          >
+            <img
+              src={product.imageUrl}
+              alt={product.Imgname}
+              className="w-full h-40 object-contain mb-4 rounded-lg"
+            />
+            <h2 className="text-lg font-semibold text-gray-900">
+              {product.Imgname}
+            </h2>
+            <p className="text-sm text-gray-600">{product.description}</p>
+            <p className="text-xl font-bold text-gray-800 my-3">
+              ${product.price}
+            </p>
+            <div className="flex justify-between items-center">
               <button
-                onClick={() => navigate("/UploadProduct")}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                onClick={() => addToCart(product)}
+                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
               >
-                Upload Product
+                Add to Cart
+              </button>
+              <button
+                onClick={() => removeFromCart(product._id)}
+                className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+              >
+                Remove from Cart
               </button>
             </div>
-          )}
+          </div>
+        ))}
+      </div>
 
-          {loading ? (
-            <p className="text-gray-500">Loading products...</p>
-          ) : filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
-                <Link to={`/Products/${product.id}`} key={product.id}>
-                  <div className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-40 object-contain mb-4"
-                    />
-                    <h3 className="text-sm text-gray-500">{product.brand}</h3>
-                    <p className="text-md font-medium text-gray-800 truncate mb-3">
-                      {product.name}
+      <div className="mt-10">
+        <h2 className="text-xl font-bold text-gray-800">Cart</h2>
+        {cart.length === 0 ? (
+          <p className="text-gray-500">Your cart is empty</p>
+        ) : (
+          <div className="space-y-4">
+            {cart.map((product) => (
+              <div
+                key={product._id}
+                className="flex items-center justify-between bg-gray-100 p-4 rounded-lg"
+              >
+                <div className="flex items-center">
+                  <img
+                    src={product.imageUrl}
+                    alt={product.Imgname}
+                    className="w-16 h-16 object-cover mr-4 rounded-lg"
+                  />
+                  <div>
+                    <h3 className="font-semibold text-gray-800">
+                      {product.Imgname}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {product.description}
                     </p>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <span className="mr-2 text-yellow-500 font-bold">
-                        {product.rating} ★
-                      </span>
-                      <span>({product.reviews.toLocaleString()} reviews)</span>
-                    </div>
+                    <p className="font-bold text-gray-800">${product.price}</p>
                   </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500">No products found in this category.</p>
-          )}
-        </div>
+                </div>
+                <button
+                  onClick={() => removeFromCart(product._id)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default Products;
+export default Product;

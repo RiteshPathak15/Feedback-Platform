@@ -3,10 +3,13 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import Home from "./pages/Home";
 import How_it_Work from "./pages/How_it_Work";
+import ErrorPage from "./pages/ErrorPage";
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
+  Router,
   RouterProvider,
 } from "react-router-dom";
 import LayoutRoute from "./pages/Layoutroute";
@@ -17,6 +20,7 @@ import About from "./pages/About";
 import Products from "./pages/Products";
 import UploadProduct from "./pages/UploadProduct";
 import ProfileInformation from "./pages/ProfileInformation";
+import Cart from "./pages/Cart";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<LayoutRoute />}>
@@ -28,7 +32,9 @@ const router = createBrowserRouter(
       <Route path="SignInPage" element={<SignInPage />} />
       <Route path="Products" element={<Products />} />
       <Route path="UploadProduct" element={<UploadProduct />} />
+      <Route path="cart" element={<Cart />} />
       <Route path="ProfileInformation" element={<ProfileInformation />} />
+      <Route path="*" element={<ErrorPage />} />
     </Route>
   )
 );

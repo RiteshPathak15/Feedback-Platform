@@ -148,8 +148,7 @@ const Products = () => {
                   Upload Product
                 </Link>
               ) : (
-                <p className="text-gray-500">
-                </p>
+                <p className="text-gray-500"></p>
               )}
             </div>
           </div>

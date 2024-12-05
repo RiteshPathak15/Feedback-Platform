@@ -21,6 +21,9 @@ import Products from "./pages/Products";
 import UploadProduct from "./pages/UploadProduct";
 import ProfileInformation from "./pages/ProfileInformation";
 import Cart from "./pages/Cart";
+import PlaceOrder from "./pages/PlaceOrder";
+import OrderSuccess from "./pages/OrderSuccess";
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<LayoutRoute />}>
@@ -33,6 +36,8 @@ const router = createBrowserRouter(
       <Route path="Products" element={<Products />} />
       <Route path="UploadProduct" element={<UploadProduct />} />
       <Route path="cart" element={<Cart />} />
+      <Route path="/place-order" element={<PlaceOrder />} />
+      <Route path="/order-success" element={<OrderSuccess />} />
       <Route path="ProfileInformation" element={<ProfileInformation />} />
       <Route path="*" element={<ErrorPage />} />
     </Route>

@@ -1,21 +1,55 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const PlaceOrder = () => {
   const [formData, setFormData] = useState({
     name: "",
+    user_id: "",
     phone: "",
     address: "",
     email: "",
   });
 
   const [cart, setCart] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [userProfile, setUserProfile] = useState(null);
 
   const navigate = useNavigate();
 
+  // Fetch cart items from localStorage on component mount
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(storedCart);
+
+    // Fetch user profile data
+    const fetchUserProfile = async () => {
+      try {
+        const response = await axios.get("/api/v1/users/profile", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Use the stored access token
+          },
+        });
+
+        if (response.status === 200) {
+          setUserProfile(response.data); // Set user profile data
+          setFormData({
+            ...formData,
+            name: response.data.name || "",
+            user_id: response.data.user_id || "",
+            phone: response.data.phone || "",
+            address: response.data.address || "",
+            email: response.data.email || "",
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching user profile:", err);
+        setError("Unable to fetch user profile.");
+      }
+    };
+
+    fetchUserProfile();
   }, []);
 
   // Calculate total price of the cart
@@ -25,15 +59,70 @@ const PlaceOrder = () => {
       .toFixed(2); // Ensure two decimal places for price
   };
 
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Process order submission
-    navigate("/order-success");
+    setLoading(true);
+    setError("");
+
+    // Ensure form validation
+    if (!formData.name || !formData.phone || !formData.address || !formData.email) {
+      setError("All fields are required.");
+      setLoading(false);
+      return;
+    }
+
+    // Prepare the order data
+    const orderData = {
+      customerDetails: formData,
+      cartItems: cart.map((product) => ({
+        productId: product._id,  // Ensure this field contains the product ID
+        price: product.price,
+        quantity: product.quantity,
+        imageUrl: product.imageUrl || "",  // Include image URL
+        description: product.description || "",  // Include product description
+        Imgname: product.Imgname || "",  // Include product name
+      })),
+      totalPrice: calculateTotalPrice(),
+      date: new Date(),
+      status: "pending",  // Set initial order status to 'pending'
+    };
+
+    console.log("Order Data to be sent:", orderData);  // Debug the order data being sent
+
+    try {
+      // Replace with your backend API endpoint
+      const response = await axios.post(
+        "/api/v1/orders/create-order",
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Use the stored access token
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        // Order placed successfully, redirect to order success page
+        navigate("/order-success");
+        localStorage.removeItem("cart"); // Clear the cart from local storage
+        setCart([]); // Clear cart state
+      }
+    } catch (err) {
+      // Handle error during order placement
+      const errorMessage =
+        err.response?.data?.message ||
+        "Something went wrong. Please try again.";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,14 +140,12 @@ const PlaceOrder = () => {
             >
               <div className="flex items-center">
                 <img
-                  src={product.imageUrl}
-                  alt={product.Imgname}
+                  src={product.imageUrl || "/path/to/default/image.jpg"}
+                  alt={product.Imgname || "Product Image"}
                   className="w-20 h-20 object-contain mr-4"
                 />
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {product.Imgname}
-                  </h3>
+                  <h3 className="text-lg font-semibold text-gray-900">{product.Imgname}</h3>
                   <p className="text-sm text-gray-600">{product.description}</p>
                   <p className="text-xl font-bold text-gray-800">
                     ${product.price.toFixed(2)} x {product.quantity}
@@ -75,16 +162,30 @@ const PlaceOrder = () => {
           </div>
         </div>
       ) : (
-        <p>Your cart is empty.</p>
+        <p className="text-gray-600">Your cart is empty.</p>
       )}
 
       {/* Order Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <div className="bg-red-100 text-red-700 p-3 rounded mb-3">
+            {error}
+          </div>
+        )}
         <input
           type="text"
           name="name"
           placeholder="Name"
           value={formData.name}
+          onChange={handleChange}
+          className="border border-gray-300 rounded py-2 px-4 w-full"
+          required
+        />
+        <input
+          type="text"
+          name="user_id"
+          placeholder="user_id"
+          value={formData.user_id}
           onChange={handleChange}
           className="border border-gray-300 rounded py-2 px-4 w-full"
           required
@@ -118,8 +219,9 @@ const PlaceOrder = () => {
         <button
           type="submit"
           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full"
+          disabled={loading}
         >
-          Place Order
+          {loading ? "Placing Order..." : "Place Order"}
         </button>
       </form>
     </div>

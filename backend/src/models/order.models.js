@@ -1,39 +1,33 @@
-import mongoose, { Schema } from "mongoose";
+// models/order.models.js
+import mongoose from 'mongoose';
 
-const orderSchema = new Schema({
-  userId: {
+const orderSchema = new mongoose.Schema({
+  user_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'User',
     required: true,
   },
-  products: [
+  customerDetails: {
+    name: String,
+    phone: String,
+    address: String,
+    email: String,
+  },
+  cartItems: [
     {
-      productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-      },
-      quantity: {
-        type: Number,
-        required: true,
-      },
-      price: {
-        type: Number,
-        required: true,
-      },
+      productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+      quantity: Number,
+      price: Number,
+      imageUrl: String,
+      description: String,
+      Imgname: String,
     },
   ],
-  totalPrice: {
-    type: Number,
-    required: true,
-  },
-  orderDate: {
-    type: Date,
-    default: Date.now,
-  },
-  status: {
-    type: String,
-    default: "Pending",
-  },
+  totalPrice: Number,
+  date: { type: Date, default: Date.now },
+  status: { type: String, default: 'pending' },
 });
 
-export const Order = mongoose.model("Order", orderSchema);
+const Order = mongoose.model('Order', orderSchema);
+
+export default Order;

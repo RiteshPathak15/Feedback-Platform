@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -26,14 +27,21 @@ const Cart = () => {
   // Handle updating product quantity
   const updateQuantity = (productId, newQuantity) => {
     if (newQuantity <= 0) return; // Prevent quantity from being zero or negative
-
+    const maxQuantity = 10; // Optional max quantity limit
+    const updatedQuantity =
+      newQuantity > maxQuantity ? maxQuantity : newQuantity;
     const updatedCart = cart.map((product) =>
       product._id === productId
-        ? { ...product, quantity: newQuantity }
+        ? { ...product, quantity: updatedQuantity }
         : product
     );
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     setCart(updatedCart); // Update state after quantity change
+  };
+
+  // Handle proceeding to checkout
+  const handleCheckout = () => {
+    navigate("/place-order");
   };
 
   return (
@@ -42,7 +50,13 @@ const Cart = () => {
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Cart</h2>
 
         {cart.length === 0 ? (
-          <p>Your cart is empty. Go back to shopping!</p>
+          <p>
+            Your cart is empty.{" "}
+            <Link to="/Products" className="text-blue-500">
+              Go back to shopping
+            </Link>
+            !
+          </p>
         ) : (
           <div>
             <div className="space-y-4">
@@ -53,8 +67,8 @@ const Cart = () => {
                 >
                   <div className="flex items-center">
                     <img
-                      src={product.imageUrl}
-                      alt={product.Imgname}
+                      src={product.imageUrl || "/path/to/default/image.jpg"}
+                      alt={product.Imgname || "Product Image"}
                       className="w-20 h-20 object-contain mr-4"
                     />
                     <div>
@@ -121,8 +135,11 @@ const Cart = () => {
                 <p>Total Price: ${calculateTotalPrice()}</p>
               </div>
 
-              <button className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
-                <Link to="/place-order"> Proceed to Checkout</Link>
+              <button
+                onClick={handleCheckout}
+                className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+              >
+                Proceed to Checkout
               </button>
             </div>
           </div>

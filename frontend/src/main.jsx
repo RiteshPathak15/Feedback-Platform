@@ -4,14 +4,6 @@ import "./index.css";
 import Home from "./pages/Home";
 import How_it_Work from "./pages/How_it_Work";
 import ErrorPage from "./pages/ErrorPage";
-
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Route,
-  Router,
-  RouterProvider,
-} from "react-router-dom";
 import LayoutRoute from "./pages/Layoutroute";
 import Contact from "./pages/Contact";
 import SignInPage from "./pages/SignInPage";
@@ -23,7 +15,16 @@ import ProfileInformation from "./pages/ProfileInformation";
 import Cart from "./pages/Cart";
 import PlaceOrder from "./pages/PlaceOrder";
 import OrderSuccess from "./pages/OrderSuccess";
+import OrderHistory from "./pages/OrderHistory"; // Import OrderHistory component
 
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from "react-router-dom";
+
+// Create browser router with routes
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<LayoutRoute />}>
@@ -38,12 +39,14 @@ const router = createBrowserRouter(
       <Route path="cart" element={<Cart />} />
       <Route path="/place-order" element={<PlaceOrder />} />
       <Route path="/order-success" element={<OrderSuccess />} />
+      <Route path="/order-history" element={<OrderHistory />} />{" "}
       <Route path="ProfileInformation" element={<ProfileInformation />} />
       <Route path="*" element={<ErrorPage />} />
     </Route>
   )
 );
 
+// Render the app with StrictMode
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <RouterProvider router={router} />

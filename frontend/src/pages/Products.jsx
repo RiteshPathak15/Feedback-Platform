@@ -9,6 +9,7 @@ const Products = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingUser, setLoadingUser] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch user info
   useEffect(() => {
@@ -17,10 +18,10 @@ const Products = () => {
         const { data } = await axios.get("/api/v1/users/profile", {
           withCredentials: true,
         });
-        console.log("Fetched user data:", data); // Log the user data for debugging
         setUser(data.user);
       } catch (error) {
         console.error("Error fetching user info:", error);
+        setError("Error fetching user data.");
       } finally {
         setLoadingUser(false);
       }
@@ -43,6 +44,7 @@ const Products = () => {
         setCategories(uniqueCategories);
       } catch (error) {
         console.error("Error fetching products:", error);
+        setError("Error fetching products.");
       } finally {
         setLoading(false);
       }
@@ -51,48 +53,34 @@ const Products = () => {
     fetchProducts();
   }, []);
 
-  // Handle category filter
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
   };
 
-  // Filtered products
   const filteredProducts =
     selectedCategory === "All Products"
       ? products
       : products.filter((product) => product.category === selectedCategory);
 
-  // Handle adding product to the cart
   const addToCart = (product) => {
     try {
-      // Retrieve existing cart from localStorage
       const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
-
-      // Check if the product already exists in the cart
       const existingProduct = existingCart.find(
         (item) => item._id === product._id
       );
 
       let updatedCart;
       if (existingProduct) {
-        // Update quantity if the product already exists
         updatedCart = existingCart.map((item) =>
           item._id === product._id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        // Add the product if it's new
         updatedCart = [...existingCart, { ...product, quantity: 1 }];
       }
 
-      // Save updated cart to localStorage
       localStorage.setItem("cart", JSON.stringify(updatedCart));
-
-      // Debugging logs
-      console.log("Updated Cart:", updatedCart);
-
-      // Success alert
       alert(`${product.Imgname} added to cart`);
     } catch (error) {
       console.error("Error adding product to cart:", error);
@@ -100,9 +88,12 @@ const Products = () => {
     }
   };
 
-  // Check if the user is loading or not
   if (loadingUser) {
     return <p>Loading user info...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
   }
 
   return (
@@ -139,16 +130,13 @@ const Products = () => {
               >
                 Go to Cart
               </Link>
-
-              {user?.isPremium === true ? (
+              {user?.isPremium && (
                 <Link
                   to="/UploadProduct"
                   className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
                 >
                   Upload Product
                 </Link>
-              ) : (
-                <p className="text-gray-500"></p>
               )}
             </div>
           </div>

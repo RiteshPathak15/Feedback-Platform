@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import axios from "axios";
 import { FaUser, FaEnvelope, FaStar, FaCheckCircle } from "react-icons/fa"; // Importing icons from react-icons
 
@@ -13,6 +13,7 @@ function ProfileInformation() {
             Authorization: `Bearer FeedbackAccessToken`, // Token should be dynamically fetched if needed
           },
         });
+          
         setUser(response.data.user);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -72,6 +73,13 @@ function ProfileInformation() {
         <p className="text-lg text-gray-500 mt-2">
           {user.isPremium ? "Premium User" : "Regular User"}
         </p>
+      </div>
+
+      {/* User ID Card */}
+      <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center">
+        <FaUser className="text-3xl text-gray-500 mb-4" />
+        <h3 className="text-xl font-semibold text-gray-700">User ID</h3>
+        <p className="text-lg text-gray-500 mt-2">{user.user_id}</p>
       </div>
     </div>
   );

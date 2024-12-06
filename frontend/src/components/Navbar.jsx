@@ -92,10 +92,10 @@ function Navbar() {
             Resources
           </Link>
           <Link
-            to="#company"
+            to="order-history"
             className="hover:text-blue-700 transition duration-300"
           >
-            Company
+            Order-History
           </Link>
         </div>
       </div>
@@ -208,11 +208,11 @@ function Navbar() {
               Resources
             </Link>
             <Link
-              to="#company"
+              to="/order-history"
               className="text-blue-900 hover:text-blue-700 transition duration-300"
               onClick={() => setIsOpen(false)}
             >
-              Company
+              Order History
             </Link>
             <Link
               to="/Contact"

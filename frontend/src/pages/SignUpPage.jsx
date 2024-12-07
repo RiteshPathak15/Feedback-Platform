@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import DirectSign from "../components/DirectSign";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -142,6 +141,11 @@ const SignUpPage = () => {
             </button>
           </form>
 
+  {/* Divider */}
+  <div className="flex items-center my-4">
+            <div className="flex-grow border-t border-gray-300"></div>
+            
+          </div>
           {/* Terms and Conditions */}
           <div className="mt-4 text-center text-gray-500 text-sm">
             By signing up, you agree to our{" "}
@@ -155,13 +159,7 @@ const SignUpPage = () => {
             .
           </div>
 
-          {/* Divider */}
-          <div className="flex items-center my-4">
-            <div className="flex-grow border-t border-gray-300"></div>
-            <span className="mx-4 text-gray-500">or</span>
-            <div className="flex-grow border-t border-gray-300"></div>
-          </div>
-          <DirectSign />
+        
         </div>
       </div>
 

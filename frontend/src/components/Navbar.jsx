@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import { FaBars, FaTimes } from "react-icons/fa";
-import axios from "axios"; // Make sure this is imported if you're using axios for API calls
+import axios from "axios";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [username, setUsername] = useState("");
+  const navigate = useNavigate(); // Initialize navigate
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -18,12 +19,18 @@ function Navbar() {
 
   const handleLogout = async () => {
     try {
+      // Perform logout API call
       await axios.post("/api/v1/users/logout", null, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
+
+      // Remove the accessToken from localStorage
       localStorage.removeItem("accessToken");
+
+      // Redirect the user to the SignIn page
+      navigate("/SignInPage"); // Programmatically navigate to SignInPage
     } catch (error) {
       console.error("Error during logout:", error);
     }

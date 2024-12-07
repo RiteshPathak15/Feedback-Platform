@@ -49,6 +49,7 @@ const createProduct = async (req, res) => {
 };
 
 // Comment on a product
+
 const commentOnProduct = async (req, res) => {
   try {
     const { productId, comment } = req.body;
@@ -67,19 +68,31 @@ const commentOnProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Push the new comment into the comments array
+    // Find the user who is commenting
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Add the comment to the product's comments array
     product.comments.push({ userId, username: req.user.username, comment });
     await product.save();
+
+    // Add reward points to the user (e.g., 10 points for commenting)
+    user.rewardpoints += 10;  // Adjust the points as needed
+    await user.save();
 
     res.status(200).json({
       message: "Comment added successfully",
       comment: { userId, username: req.user.username, comment },
+      rewardPoints: user.rewardpoints, // Include updated reward points in the response
     });
   } catch (error) {
     console.error("Error adding comment:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // Rate a product
 const rateProduct = async (req, res) => {

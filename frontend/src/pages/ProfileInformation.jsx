@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"; 
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaUser, FaEnvelope, FaStar, FaCheckCircle } from "react-icons/fa"; // Importing icons from react-icons
 
@@ -6,6 +6,7 @@ function ProfileInformation() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    console.log("Fetching user data...");  // Log to ensure this is executing
     const fetchUserData = async () => {
       try {
         const response = await axios.get("/api/v1/users/profile", {
@@ -13,8 +14,8 @@ function ProfileInformation() {
             Authorization: `Bearer FeedbackAccessToken`, // Token should be dynamically fetched if needed
           },
         });
-          
-        setUser(response.data.user);
+        console.log(response.data);  // Log the response
+        setUser(response.data.user); // Set the user data to state
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -23,6 +24,7 @@ function ProfileInformation() {
     fetchUserData();
   }, []);
 
+  // If user data is not loaded, display the loading message
   if (!user) {
     return <div className="text-center text-xl">Loading...</div>;
   }
@@ -65,9 +67,7 @@ function ProfileInformation() {
       {/* Premium User Status Card */}
       <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center">
         <FaCheckCircle
-          className={`text-3xl ${
-            user.isPremium ? "text-green-500" : "text-gray-500"
-          } mb-4`}
+          className={`text-3xl ${user.isPremium ? "text-green-500" : "text-gray-500"} mb-4`}
         />
         <h3 className="text-xl font-semibold text-gray-700">User Status</h3>
         <p className="text-lg text-gray-500 mt-2">
@@ -79,7 +79,7 @@ function ProfileInformation() {
       <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col items-center">
         <FaUser className="text-3xl text-gray-500 mb-4" />
         <h3 className="text-xl font-semibold text-gray-700">User ID</h3>
-        <p className="text-lg text-gray-500 mt-2">{user.user_id}</p>
+        <p className="text-lg text-gray-500 mt-2">{user.id}</p>
       </div>
     </div>
   );

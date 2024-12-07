@@ -11,10 +11,12 @@ connectDB()
   app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
+
 })
 .catch((err)=>{
   console.log("Error from Database connection : ", err);
 })
+
 
 
 

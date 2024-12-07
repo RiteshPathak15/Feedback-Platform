@@ -29,16 +29,26 @@ const ProductDetails = () => {
   const handleAddComment = async () => {
     if (newComment.trim()) {
       try {
+        // Make the API call to add the comment and update reward points
         const { data } = await axios.post(
           `/api/v1/products/comment`,
           { productId: id, comment: newComment },
           { withCredentials: true }
         );
+
+        // Update the product details with the new comment
         setProduct((prev) => ({
           ...prev,
           comments: [...prev.comments, data.comment],
         }));
-        setNewComment("");
+
+        // Update the user's reward points
+        alert(
+          `You earned 10 reward points! Total reward points: ${data.rewardPoints}`
+        );
+
+        // Optionally update the UI with the new reward points
+        setNewComment(""); // Clear the comment input
       } catch (error) {
         setError("Error adding comment.");
       }

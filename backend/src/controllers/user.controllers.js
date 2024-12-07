@@ -189,38 +189,26 @@
 
   const getUserProfile = async (req, res) => {
     try {
-      const userId = req.user._id; // Assuming `verifyJWT` middleware is used
-
-      const user = await User.findById(userId).select("-password -refreshToken");
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-
-      // Dynamically calculate reward points from products
-      const totalPoints = await Product.aggregate([
-        { $match: { "comments.userId": userId } },
-        { $group: { _id: null, totalPoints: { $sum: "$pointsEarned" } } },
-      ]);
-
-      const rewardPoints = totalPoints.length > 0 ? totalPoints[0].totalPoints : 0;
-
-      res.status(200).json({
+      const userId = req.user._id; // Assuming user is authenticated and userId is available in `req.user._id`
+      const user = await User.findById(userId); // Fetch user from database
+  
+      // Map and send the correct response
+      res.json({
         user: {
           id: user._id,
-          fullname: user.fullname,
           username: user.username,
+          fullname: user.fullname,
           email: user.email,
+          rewardPoints: user.rewardpoints,  // Ensure it's properly mapped
           isPremium: user.isPremium,
-          rewardPoints, // Reflect calculated reward points
-          user_id: user._id, 
         },
       });
     } catch (error) {
-      console.error("Error fetching user profile:", error);
-      res.status(500).json({ message: "Server error. Please try again later." });
+      console.error("Error fetching user data:", error);
+      res.status(500).json({ error: "Error fetching user data" });
     }
   };
-
+  
 
   export {
     registerUser,

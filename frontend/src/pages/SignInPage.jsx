@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Mobile1 from "../assets/Mobile1.png";
 import Mobile2 from "../assets/Mobile2.png";
-import DirectSign from "../components/DirectSign";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -117,10 +116,8 @@ const SignInPage = () => {
           {/* Divider */}
           <div className="flex items-center my-4">
             <div className="flex-grow border-t border-gray-300"></div>
-            <span className="mx-4 text-gray-500">or</span>
-            <div className="flex-grow border-t border-gray-300"></div>
+          
           </div>
-          <DirectSign />
         </div>
       </div>
 

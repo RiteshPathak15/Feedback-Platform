@@ -16,6 +16,7 @@ import Cart from "./pages/Cart";
 import PlaceOrder from "./pages/PlaceOrder";
 import OrderSuccess from "./pages/OrderSuccess";
 import OrderHistory from "./pages/OrderHistory"; // Import OrderHistory component
+import ProductDetails from "./pages/ProductDetails";
 
 import {
   createBrowserRouter,
@@ -36,6 +37,7 @@ const router = createBrowserRouter(
       <Route path="SignInPage" element={<SignInPage />} />
       <Route path="Products" element={<Products />} />
       <Route path="UploadProduct" element={<UploadProduct />} />
+      <Route path="ProductDetails/:id" element={<ProductDetails/>} />
       <Route path="cart" element={<Cart />} />
       <Route path="place-order" element={<PlaceOrder />} />
       <Route path="order-success" element={<OrderSuccess />} />

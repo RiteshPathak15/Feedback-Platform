@@ -2,16 +2,16 @@ import { Product } from "../models/productUpload.models.js";
 import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
+// Create a new product
 const createProduct = async (req, res) => {
   try {
     const { Imgname, description, price, category, addedBy } = req.body;
 
-    // Validate required fields
+    // Check if all required fields are provided
     if (!Imgname || !description || !price || !category || !req.file) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if the user is premium
     const user = await User.findById(addedBy);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -22,13 +22,13 @@ const createProduct = async (req, res) => {
         .json({ message: "Only premium users can upload products" });
     }
 
-    // Upload image to Cloudinary
+    // Upload the product image to Cloudinary
     const productImg = await uploadOnCloudinary(req.file.path);
     if (!productImg || !productImg.url) {
       return res.status(500).json({ message: "Error uploading product image" });
     }
 
-    // Create and save the product
+    // Create a new product
     const newProduct = new Product({
       Imgname,
       description,
@@ -48,47 +48,32 @@ const createProduct = async (req, res) => {
   }
 };
 
+// Comment on a product
 const commentOnProduct = async (req, res) => {
   try {
-    const { productId, userId, comment } = req.body;
+    const { productId, comment } = req.body;
+    const userId = req.user.id;
 
-    // Validate inputs
-    if (!productId || !userId || !comment) {
-      return res.status(400).json({ message: "All fields are required" });
+    // Ensure comment and productId are provided
+    if (!productId || !comment) {
+      return res
+        .status(400)
+        .json({ message: "Product ID and comment are required" });
     }
 
-    // Check if product exists
+    // Find the product
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Calculate points based on comment length
-    const points = comment.length > 50 ? 10 : 5;
-
-    // Update the pointsEarned for the product
-    product.pointsEarned += points;
-    product.comments = product.comments || [];
+    // Push the new comment into the comments array
     product.comments.push({ userId, username: req.user.username, comment });
-
     await product.save();
-
-    // Recalculate total reward points for the user
-    const totalPoints = await Product.aggregate([
-      { $match: { "comments.userId": userId } },
-      { $group: { _id: null, totalPoints: { $sum: "$pointsEarned" } } },
-    ]);
-
-    const rewardPoints =
-      totalPoints.length > 0 ? totalPoints[0].totalPoints : 0;
-
-    // Update the user's rewardPoints
-    await User.findByIdAndUpdate(userId, { rewardpoints: rewardPoints });
 
     res.status(200).json({
       message: "Comment added successfully",
-      updatedRewardPoints: rewardPoints,
-      product,
+      comment: { userId, username: req.user.username, comment },
     });
   } catch (error) {
     console.error("Error adding comment:", error);
@@ -96,4 +81,54 @@ const commentOnProduct = async (req, res) => {
   }
 };
 
-export { createProduct, commentOnProduct };
+// Rate a product
+const rateProduct = async (req, res) => {
+  try {
+    const { productId, rating } = req.body;
+    const userId = req.user.id;
+
+    // Validate rating
+    if (!productId || !rating || rating < 1 || rating > 5) {
+      return res.status(400).json({ message: "Invalid rating" });
+    }
+
+    // Find the product
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // Check if the user has already rated the product
+    const existingRating = product.ratings.find(
+      (r) => r.userId.toString() === userId
+    );
+    if (existingRating) {
+      return res
+        .status(400)
+        .json({ message: "You have already rated this product" });
+    }
+
+    // Add the new rating
+    product.ratings.push({ userId, rating });
+
+    // Calculate the new average rating
+    const totalRatings = product.ratings.length;
+    const sumRatings = product.ratings.reduce(
+      (acc, curr) => acc + curr.rating,
+      0
+    );
+    product.averageRating = sumRatings / totalRatings;
+
+    await product.save();
+
+    res.status(200).json({
+      message: "Rating added successfully",
+      averageRating: product.averageRating,
+    });
+  } catch (error) {
+    console.error("Error adding rating:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export { createProduct, commentOnProduct, rateProduct };

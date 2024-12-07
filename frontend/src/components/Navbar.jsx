@@ -5,8 +5,8 @@ import axios from "axios"; // Make sure this is imported if you're using axios f
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false); 
-  const [username, setUsername] = useState(""); 
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [username, setUsername] = useState("");
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -38,7 +38,7 @@ function Navbar() {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         });
-        setUsername(response.data.user.username); 
+        setUsername(response.data.user.username);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -73,24 +73,7 @@ function Navbar() {
           >
             Products
           </Link>
-          <Link
-            to="#industries"
-            className="hover:text-blue-700 transition duration-300"
-          >
-            Industries
-          </Link>
-          <Link
-            to="#services"
-            className="hover:text-blue-700 transition duration-300"
-          >
-            Services
-          </Link>
-          <Link
-            to="#resources"
-            className="hover:text-blue-700 transition duration-300"
-          >
-            Resources
-          </Link>
+
           <Link
             to="order-history"
             className="hover:text-blue-700 transition duration-300"
@@ -186,27 +169,7 @@ function Navbar() {
             >
               Products
             </Link>
-            <Link
-              to="#industries"
-              className="text-blue-900 hover:text-blue-700 transition duration-300"
-              onClick={() => setIsOpen(false)}
-            >
-              Industries
-            </Link>
-            <Link
-              to="#services"
-              className="text-blue-900 hover:text-blue-700 transition duration-300"
-              onClick={() => setIsOpen(false)}
-            >
-              Services
-            </Link>
-            <Link
-              to="#resources"
-              className="text-blue-900 hover:text-blue-700 transition duration-300"
-              onClick={() => setIsOpen(false)}
-            >
-              Resources
-            </Link>
+
             <Link
               to="/order-history"
               className="text-blue-900 hover:text-blue-700 transition duration-300"

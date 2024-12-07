@@ -10,27 +10,22 @@ const Footer = () => {
           <h4 className="font-bold mb-4">Platform</h4>
           <ul className="space-y-2">
             <li>
-              <Link to="/sampling">Sampling</Link>
+              <Link to="/How_it_Work">How It Works</Link>
             </li>
             <li>
-              <Link to="/creator-partnerships">Creator Partnerships</Link>
+              <Link to="/Contact">Contact</Link>
             </li>
             <li>
-              <Link to="/qa">Questions & Answers</Link>
+              <Link to="/SignInPage">Sign In</Link>
             </li>
             <li>
-              <Link to="/retail-syndication">Retail Syndication</Link>
+              <Link to="/SignUpPage">Sign Up</Link>
             </li>
             <li>
-              <Link to="/digital-activations">
-                In-store & Digital Activations
-              </Link>
+              <Link to="/Products">Products</Link>
             </li>
             <li>
-              <Link to="/services">Services</Link>
-            </li>
-            <li>
-              <Link to="/affable-ai">TestifyIt Affable.ai</Link>
+              <Link to="/cart">Cart</Link>
             </li>
           </ul>
         </div>
@@ -40,16 +35,13 @@ const Footer = () => {
           <h4 className="font-bold mb-4">Resources</h4>
           <ul className="space-y-2">
             <li>
-              <Link to="/resources-hub">Resources Hub</Link>
+              <Link to="/about">About</Link>
             </li>
             <li>
-              <Link to="/blog">Blog</Link>
+              <Link to="/order-history">Order History</Link>
             </li>
             <li>
-              <Link to="/case-studies">Case Studies</Link>
-            </li>
-            <li>
-              <Link to="/what-is-ugc">What is UGC?</Link>
+              <Link to="/ProfileInformation">Profile</Link>
             </li>
           </ul>
         </div>
@@ -59,28 +51,10 @@ const Footer = () => {
           <h4 className="font-bold mb-4">Company</h4>
           <ul className="space-y-2">
             <li>
-              <Link to="/about">About TestifyIt</Link>
-            </li>
-            <li>
-              <Link to="/advantage">The TestifyIt Advantage</Link>
+              <Link to="/about">About Us</Link>
             </li>
             <li>
               <Link to="/How_it_Work">FAQs</Link>
-            </li>
-            <li>
-              <Link to="/trust">Trust</Link>
-            </li>
-            <li>
-              <Link to="/careers">Careers</Link>
-            </li>
-            <li>
-              <Link to="/press">Press</Link>
-            </li>
-            <li>
-              <Link to="/events">TestifyIt Events</Link>
-            </li>
-            <li>
-              <Link to="/product-updates">Product Updates</Link>
             </li>
           </ul>
         </div>
@@ -90,16 +64,7 @@ const Footer = () => {
           <h4 className="font-bold mb-4">Client Services & Support</h4>
           <ul className="space-y-2">
             <li>
-              <Link to="/customer-support">Customer Support</Link>
-            </li>
-            <li>
-              <Link to="/knowledge-base">Knowledge Base</Link>
-            </li>
-            <li>
-              <Link to="/developers">Developers</Link>
-            </li>
-            <li>
-              <Link to="/system-status">System Status</Link>
+              <Link to="/Contact">Customer Support</Link>
             </li>
           </ul>
         </div>
@@ -114,13 +79,7 @@ const Footer = () => {
             <Link to="/privacy">Privacy</Link>
           </li>
           <li>
-            <Link to="/authenticity">Authenticity</Link>
-          </li>
-          <li>
             <Link to="/terms">Terms</Link>
-          </li>
-          <li>
-            <Link to="/cookie-settings">Cookie Settings</Link>
           </li>
         </ul>
         <div className="flex space-x-4">

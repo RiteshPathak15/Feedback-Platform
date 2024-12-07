@@ -150,14 +150,16 @@ const Products = () => {
                   key={product._id}
                   className="bg-white p-4 rounded-lg shadow-lg transition hover:shadow-xl"
                 >
-                  <img
-                    src={product.imageUrl}
-                    alt={product.Imgname}
-                    className="w-full h-40 object-contain mb-4 rounded-lg"
-                  />
-                  <h2 className="text-lg font-semibold text-gray-900">
-                    {product.Imgname}
-                  </h2>
+                  <Link to={`/ProductDetails/${product._id}`}>
+                    <img
+                      src={product.imageUrl}
+                      alt={product.Imgname}
+                      className="w-full h-40 object-contain mb-4 rounded-lg"
+                    />
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      {product.Imgname}
+                    </h2>
+                  </Link>
                   <p className="text-sm text-gray-600">{product.description}</p>
                   <p className="text-xl font-bold text-gray-800 my-3">
                     ${product.price}

@@ -93,12 +93,6 @@ function Navbar() {
       {/* Profile Dropdown and Desktop Right Side */}
       <div className="hidden md:flex items-center space-x-6">
         <Link
-          to="/Contact"
-          className="text-blue-500 hover:text-blue-700 transition duration-300"
-        >
-          Contact Us
-        </Link>
-        <Link
           to="/about"
           className="text-blue-500 hover:text-blue-700 transition duration-300"
         >
@@ -185,11 +179,11 @@ function Navbar() {
               Order History
             </Link>
             <Link
-              to="/Contact"
+              to="/about"
               className="text-blue-500 hover:text-blue-700 transition duration-300"
               onClick={() => setIsOpen(false)}
             >
-              Contact Us
+              About
             </Link>
             <Link
               to="/SignInPage"

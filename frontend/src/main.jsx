@@ -5,7 +5,6 @@ import Home from "./pages/Home";
 import How_it_Work from "./pages/How_it_Work";
 import ErrorPage from "./pages/ErrorPage";
 import LayoutRoute from "./pages/Layoutroute";
-import Contact from "./pages/Contact";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import About from "./pages/About";
@@ -31,7 +30,6 @@ const router = createBrowserRouter(
     <Route path="/" element={<LayoutRoute />}>
       <Route index element={<Home />} />
       <Route path="How_it_Work" element={<How_it_Work />} />
-      <Route path="Contact" element={<Contact />} />
       <Route path="about" element={<About />} />
       <Route path="SignUpPage" element={<SignUpPage />} />
       <Route path="SignInPage" element={<SignInPage />} />

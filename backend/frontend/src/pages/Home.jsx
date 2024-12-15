@@ -3,6 +3,8 @@ import backgroundImage from "../assets/bg_image.png";
 import mainImage from "../assets/more_personal.png";
 import mainImage2 from "../assets/More_reviews.png";
 import mainImage3 from "../assets/More_samples.png";
+import footer_img from "../assets/footer_img.png"
+import bg_design from "./assets/bg_design.png"
 import { Link } from "react-router-dom";
 
 function Home() {
@@ -78,7 +80,7 @@ function Home() {
       {/* Final Section */}
       <div className="flex items-center justify-center min-h-screen bg-blue-600 relative">
         <img
-          src="src/assets/bg_design.png"
+          src={bg_design}
           alt="Hero Section"
           className="w-screen h-screen object-cover"
         />
@@ -90,7 +92,7 @@ function Home() {
             Join the community now
           </button>
           <img
-            src="src/assets/footer_img.png"
+            src={footer_img}
             alt="Footer Section"
             className="w-fit max-h-96 p-4"
           />

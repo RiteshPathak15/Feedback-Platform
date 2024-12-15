@@ -1,4 +1,9 @@
 import React from "react";
+import box_close from "./assets/box_close.png"
+import step_1_card_tablet from "./assets/step-1-card_tablet.png"
+import step_2_card_tablet from "./assets/step-2-card_tablet.png"
+import step_3_review_card_tablet from "./assets/step-3-review-card_tablet.png"
+import box_open from "./assets/box_open.png"
 
 const List_of_work = () => {
   return (
@@ -6,7 +11,7 @@ const List_of_work = () => {
       {/* Decorative Icon and Text */}
       <div className="flex flex-col items-center mt-16 ">
         <img
-          src="src/assets/box_close.png"
+          src={box_close}
           alt="How it works icon"
           className="h-14"
         />
@@ -21,7 +26,7 @@ const List_of_work = () => {
 
           {/* Information Blocks 1 */}
           <img
-            src="src/assets/step-1-card_tablet.png"
+            src={step_1_card_tablet}
             alt="Login Card"
             className="relative"
           />
@@ -41,7 +46,7 @@ const List_of_work = () => {
 
           {/* Information Blocks 2 */}
           <img
-            src="src/assets/step-2-card_tablet.png"
+            src={step_2_card_tablet}
             alt="Login Card"
             className="relative top-5 p-4"
           />
@@ -60,7 +65,7 @@ const List_of_work = () => {
 
           {/* Information Blocks 3 */}
           <img
-            src="src/assets/step-3-review-card_tablet.png"
+            src={step_3_review_card_tablet}
             alt="Login Card"
             className="relative top-5 p-4"
           />
@@ -81,7 +86,7 @@ const List_of_work = () => {
       {/* Decorative Icon and Text */}
       <div className="flex flex-col items-center pb-4">
         <img
-          src="src/assets/box_open.png"
+          src={box_open}
           alt="How it works icon"
           className="h-14"
         />

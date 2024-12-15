@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Mobile1 from "./assets/Mobile1.png";
+import Mobile2 from "./assets/Mobile2.png";
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -55,12 +57,12 @@ const SignUpPage = () => {
       <div className="md:w-1/2 bg-purple-800 text-white flex flex-col items-center justify-center p-10">
         <div className="flex flex-col items-center space-y-4 mb-6">
           <img
-            src="src/assets/Mobile1.png"
+            src={Mobile1}
             alt="App Screenshot 1"
             className="absolute right-3/4 w-60 rounded-lg shadow-lg"
           />
           <img
-            src="src/assets/Mobile2.png"
+            src={Mobile2}
             alt="App Screenshot 2"
             className="w-60 rounded-lg shadow-lg"
           />
@@ -141,10 +143,9 @@ const SignUpPage = () => {
             </button>
           </form>
 
-  {/* Divider */}
-  <div className="flex items-center my-4">
+          {/* Divider */}
+          <div className="flex items-center my-4">
             <div className="flex-grow border-t border-gray-300"></div>
-            
           </div>
           {/* Terms and Conditions */}
           <div className="mt-4 text-center text-gray-500 text-sm">
@@ -158,8 +159,6 @@ const SignUpPage = () => {
             </Link>
             .
           </div>
-
-        
         </div>
       </div>
 

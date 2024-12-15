@@ -1,11 +1,13 @@
 import React from "react";
+import bg_design from "./assets/bg_design.png"
+import footer_img from "./assets/footer_img.png"
 
 const HeroSection = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-blue-600 relative">
       {/* Background Image */}
       <img
-        src="src/assets/bg_design.png"
+        src={bg_design}
         alt="Hero Section"
         className="w-screen h-screen object-cover"
       />
@@ -19,7 +21,7 @@ const HeroSection = () => {
           Join the community now
         </button>
       <img
-        src="src/assets/footer_img.png"
+        src={footer_img}
         alt="Hero Section"
         className="w-fit max-h-96 p-4"
       />

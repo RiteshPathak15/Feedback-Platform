@@ -1,6 +1,7 @@
 import React from "react";
-import List_of_work from "../components/list_of_work";
+import List_of_work from "../components/List_of_work";
 import FAQ from "../components/FAQ";
+import More_reviews from "./assets/More_reviews.png"
 
 const How_it_Work = () => {
   return (
@@ -27,7 +28,7 @@ const How_it_Work = () => {
         {/* Right-Side Image */}
         <div className="ml-8 mt-16">
           <img
-            src="src/assets/More_reviews.png"
+            src={More_reviews}
             alt="Product"
             className="h-1/5 w-50" // Adjust width for better size control
           />

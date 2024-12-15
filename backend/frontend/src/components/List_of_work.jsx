@@ -1,9 +1,9 @@
 import React from "react";
-import box_close from "./assets/box_close.png"
-import step_1_card_tablet from "./assets/step-1-card_tablet.png"
-import step_2_card_tablet from "./assets/step-2-card_tablet.png"
-import step_3_review_card_tablet from "./assets/step-3-review-card_tablet.png"
-import box_open from "./assets/box_open.png"
+import box_close from "../assets/box_close.png"
+import step_1_card_tablet from "../assets/step-1-card_tablet.png"
+import step_2_card_tablet from "../assets/step-2-card_tablet.png"
+import step_3_review_card_tablet from "../assets/step-3-review-card_tablet.png"
+import box_open from "../assets/box_open.png"
 
 const List_of_work = () => {
   return (

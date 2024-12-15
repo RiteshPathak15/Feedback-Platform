@@ -4,7 +4,7 @@ import mainImage from "../assets/more_personal.png";
 import mainImage2 from "../assets/More_reviews.png";
 import mainImage3 from "../assets/More_samples.png";
 import footer_img from "../assets/footer_img.png"
-import bg_design from "./assets/bg_design.png"
+import bg_design from "../assets/bg_design.png"
 import { Link } from "react-router-dom";
 
 function Home() {

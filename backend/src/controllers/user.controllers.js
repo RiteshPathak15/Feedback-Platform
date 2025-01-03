@@ -1,4 +1,4 @@
-  import bcrypt from "bcrypt";
+  import bcrypt from "bcryptjs";
   import { User } from "../models/user.models.js";
   import { Product } from "../models/productUpload.models.js";
 
